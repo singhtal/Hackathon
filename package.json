@@ -1,0 +1,26 @@
+{
+  "name": "hackathon",
+  "version": "1.0.0",
+  "description": "Unilever hackathon",
+  "main": "index.html",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "jquery-video2image": "^1.0.3",
+    "mongoose": "^5.6.11"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tal1992/Hackathon.git"
+  },
+  "author": "Talvinder Singh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tal1992/Hackathon/issues"
+  },
+  "homepage": "https://github.com/tal1992/Hackathon#readme"
+}
