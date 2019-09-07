@@ -1,7 +1,78 @@
+(function ($) {
+    navigator.getUserMedia_ = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+    var isSupported = !!navigator.getUserMedia_;
+    var canvas;
+    var video;
+
+    $.fn.video2image = function (elem,options) {
+    canvas = elem // our canvas
+    alert(elem);
+
+    if (options === 'isSupported') {
+        return isSupported;
+    } else if (options === 'capture') {
+        return canvas.toDataURL();
+    } else if (options === 'stop') {
+        video.pause();
+        video.srcObject.getTracks().forEach(track => track.stop())
+        // console.log($('#'+video.srcObject.id).length)
+        return false;
+    } else if (options === 'start') {
+        return video.play();
+    } else {
+        // These are the defaults.
+        var settings = $.extend({
+            width: canvas.clientWidth,
+            height: canvas.clientHeight,
+            autoplay: true,
+            onerror: function () {},
+            onsuccess: function () {}
+        }, options);
+
+        // canvas context
+        var canvasContext = canvas.getContext('2d');
+
+        // video element
+        video = document.createElement('video');
+
+        // Update our canvas dimensions
+        $(canvas).prop("width", settings.width).prop("height", settings.height);
+
+        // requestAnimationFrame
+        window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+        // Write video to our canvas
+        function tocanvas() {
+            canvasContext.drawImage(video, 0, 0, settings.width, settings.height);
+            window.requestAnimationFrame(tocanvas);
+        }
+
+        // Set up video
+        if (isSupported) {
+            //navigator.webkitGetUserMedia({
+            navigator.getUserMedia_({
+                video: true
+            }, function (stream) {
+                video.srcObject = stream;
+                if (settings.autoplay)
+                    video.play();
+                window.requestAnimationFrame(tocanvas);
+                settings.onsuccess();
+            }, settings.onerror);
+        }
+        return this.css({
+            width: settings.width,
+            height: settings.height
+        });
+    }
+    }
+
+}());
+
 var prodRecommender = (function () {
     "use strict";
     return {
-        createDOM : (elem) => {
+        createDOM : function(elem){
             var container = document.getElementsByClassName('product-recommend')[0];
             $(container).append(`
             <div class="img-container text-center">
@@ -59,9 +130,10 @@ var prodRecommender = (function () {
             $('.clicknow').on('click', function (e) {
                 // click final image from live preview webcam
                 e.stopPropagation();
-                $('#photocanvas').video2image('capture');
-                document.getElementById("b64").innerHTML = $('#photocanvas').video2image('capture');
-                $('#photocanvas').video2image('stop');
+
+                video2image($('#photocanvas'),'capture');
+                document.getElementById("b64").innerHTML = video2image($('#photocanvas'),'capture');
+                video2image($('#photocanvas'), 'stop');
                 self.getDetails();
                 //$('.click-img-container').removeClass('hide');
                 $('.takephoto').find('span').toggleClass('hide');
@@ -81,7 +153,8 @@ var prodRecommender = (function () {
 
         takephoto: function () {
             // user wants to take photo, not upload
-            $("#photocanvas").video2image({
+            
+            video2image($("body"), {
                 width: 216,
                 height: 162,
                 autoplay: true,
