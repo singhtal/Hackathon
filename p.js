@@ -101,6 +101,15 @@ var prodRecommender = (function () {
             `);
 
             this.fileHandler();
+            //remove below dummy code after the api development
+            // this.getProductData({
+            //     "age":63,
+            //     "gender":"male",
+            //     "emotion":"happiness",
+            //     "hairColor":"black",
+            //     "hairLength":"short",
+            //     "race":"asian"
+            //     });
         },
         fileHandler: function () {
             var self = this;
@@ -208,9 +217,9 @@ var prodRecommender = (function () {
                         race: race
                     }
                     // get data
-                    console.log(person);
+                    //console.log(person);
                     self.analyzeResults(person, $('#b64').text());
-                    //self.getData(person);
+                    self.getProductData(person);
                 }
             }
 
@@ -252,7 +261,8 @@ var prodRecommender = (function () {
                 $('.analyzerResults').fadeOut().remove();
             });
         },
-        getData: function (person) {
+        getProductData: function (person) {
+            var self = this;
             $.ajax({
                 url: "http://127.0.0.1:5000/",
                 type: 'get',
@@ -260,9 +270,57 @@ var prodRecommender = (function () {
                 contentType: 'application/json',
                 success: function (result) {
                     console.log(result);
+                    self.productListing(result);
                 },
                 data: JSON.stringify(person)
             });
+        },
+        productListing: function(products){
+            //append products here
+            $('.analyzerResults').after(`
+                <div class="productListing text-center">
+                    <h2>Explore Our Products</h2>
+                    <div class="productContainer">
+
+                    </div>
+
+                    <h2>Learn more about our expert partners</h2>
+                    <div class="articleContainer">
+
+                    </div>
+
+                </div>
+            `);
+
+            products.forEach(function(product, index){
+                $('.productContainer').append(
+                    `
+                    <div class="prod-item">
+                        <a href="${product.productUrl}">
+                            <img src="${product.imgurl}" alt="${product.productUrl}"></img>
+                            <p>${product.productName}</p>
+                        </a>
+                    </div>
+                    `
+                )
+
+
+                $('.articleContainer').append(`
+                    <div class="article-item">                      
+                        <a href="${product.article.url}">
+                            <img src="${product.article.image}"></img>
+                            <div class="article-text-container">
+                                <h4>${product.article.title}</h3>
+                                <p>${product.article.text}</p>
+                            </div>
+                        </a>
+                    </div>
+                `)
+            });
+
+
+            products
+
         }
     }
 }());
