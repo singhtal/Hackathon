@@ -63,19 +63,34 @@ app.get('/', function(req, res) {
     var keys = Object.keys(req.query);
     var jsonparams = keys[0];
 
-    //console.log(jsonparams);
+    var userObj = JSON.parse(jsonparams);
 
-    DoveProducts.find(function (err, hairproducts) {
-      if (err) return console.error(err);
-      console.log(hairproducts);
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(hairproducts));
-    });
+    var hairColor = (userObj.hairColor).toLowerCase();
+    var hairLength= (userObj.hairLength).toLowerCase();
+    var gender = (userObj.gender).toLowerCase();
+    var userage = parseInt(userObj.age);
+
+    console.log(hairColor, hairLength, gender, userage);
+
+    DoveProducts.find(
+      {
+        'suitableFor.minage': { $lt: userage },
+        'suitableFor.maxage': { $gt: userage },
+        'suitableFor.gender': gender,
+        'suitableFor.hairColor': hairColor,
+        'suitableFor.hairLength': hairLength
+      },
+
+      function (err, hairproducts) {
+        if (err) return console.error(err);
+        console.log(hairproducts.length);
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(hairproducts));
+      });
 
 });
 
 server.listen(5000, 'localhost');
 server.on('listening', function() {
-    console.log('hello');
     console.log('Express server started on port %s at %s', server.address().port, server.address().address);
 });
