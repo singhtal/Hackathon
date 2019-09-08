@@ -1,12 +1,11 @@
-(function ($) {
+(function () {
     navigator.getUserMedia_ = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
     var isSupported = !!navigator.getUserMedia_;
     var canvas;
     var video;
 
-    $.fn.video2image = function (elem,options) {
-    canvas = elem // our canvas
-    alert(elem);
+    video2image = function (elem,options) {
+    canvas = elem[0] // our canvas
 
     if (options === 'isSupported') {
         return isSupported;
@@ -60,7 +59,7 @@
                 settings.onsuccess();
             }, settings.onerror);
         }
-        return this.css({
+     elem.css({
             width: settings.width,
             height: settings.height
         });
@@ -87,17 +86,16 @@ var prodRecommender = (function () {
                 <canvas id="photocanvas" width="216" height="162"></canvas>
             </div>
 
-            <div class="product-form-control">
+            <div class="product-form-control" style="margin-bottom: 100px; margin-top: 30px">
                 <label for="fileupload" class="o-btn o-btn--ternary" data-upgraded=",MaterialButton,MaterialRipple">Upload
-                    Image<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></label>
+                    Image </label>
                 <span>&nbsp; Or &nbsp;</span>
                 <label class="o-btn o-btn--ternary takephoto">
-                    <span>Take photo</span>
-                    <span class="hide clicknow" id="clicknow">Click</span>
-                    <span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span>
+                    <span class="takepicbtn" style="display:block">Take photo</span>
+                    <span class="hide clicknow" id="clicknow" style="display:block">Click</span>
                 </label>
                 <input type="file" id="fileupload" class="hidden">
-                <canvas class="hidden" id="b64"></canvas>
+                <canvas class="hidden" id="b64" crossorigin="anonymous"></canvas>
             </div>
         </div>
             `);
@@ -106,16 +104,16 @@ var prodRecommender = (function () {
         },
         fileHandler: function () {
             var self = this;
+            $('#b64').attr('crossOrigin', '*');
 
             $('#fileupload').on('change', function (eve) {
                 // var file = eve.srcElement.files[0];
                 $('.img-user').removeClass('hide');
                 $('.click-img-container').addClass('hide');
-                $(this).find('span').toggleClass('hide');
+                $(this).parent().find('span:odd').toggleClass('hide');
 
                 if (eve.target.files && eve.target.files[0]) {
                     var reader = new FileReader();
-
                     reader.onload = function (e) {
                         $('.img-user img').attr('src', e.target.result).parent().addClass('scanning');
                         document.getElementById("b64").innerHTML = e.target.result;
@@ -129,23 +127,20 @@ var prodRecommender = (function () {
 
             $('.clicknow').on('click', function (e) {
                 // click final image from live preview webcam
-                e.stopPropagation();
+                //e.stopPropagation();
 
-                video2image($('#photocanvas'),'capture');
+                //video2image($('#photocanvas'),'capture');
                 document.getElementById("b64").innerHTML = video2image($('#photocanvas'),'capture');
                 video2image($('#photocanvas'), 'stop');
                 self.getDetails();
                 //$('.click-img-container').removeClass('hide');
-                $('.takephoto').find('span').toggleClass('hide');
+                $('.takephoto').find('span:odd').toggleClass('hide');
             });
 
-            $('.takephoto').on('click', function (e) {
-                if (e.target.id == "clicknow") {
-                    return false;
-                }
+            $('.takepicbtn').on('click', function (e) {
                 $('.img-user').addClass('hide');
                 $('.click-img-container').removeClass('hide');
-                $(this).find('span').toggleClass('hide');
+                $(this).parent().find('span:odd').toggleClass('hide');
                 self.takephoto();
             });
 
@@ -154,7 +149,7 @@ var prodRecommender = (function () {
         takephoto: function () {
             // user wants to take photo, not upload
             
-            video2image($("body"), {
+            video2image($("#photocanvas"), {
                 width: 216,
                 height: 162,
                 autoplay: true,
@@ -166,8 +161,9 @@ var prodRecommender = (function () {
             var self = this;
             var can = document.getElementById("b64");
             var img = document.getElementById("theimage");
-            var ctx = can.getContext("2d");
-            ctx.drawImage(img, 10, 10);
+            //img.crossOrigin = "Anonymous";
+            // var ctx = can.getContext("2d");
+            // ctx.drawImage(img, 10, 10);
             var encodedBase = can.toDataURL();
 
             var strImage = ($('#b64').text()).replace(/^data:image\/[a-z]+;base64,/, "");
@@ -183,9 +179,6 @@ var prodRecommender = (function () {
                     result = xmlhttp.responseText;
                     parsedResult = JSON.parse(result)["objects"][1]["attributes"];
                     $('.img-user').removeClass('scanning');
-
-
-                    console.log(parsedResult);
 
                     var person, age, gender, emotion, hairColor, hairLength, race;
 
@@ -216,6 +209,7 @@ var prodRecommender = (function () {
                     }
                     // get data
                     console.log(person);
+                    self.analyzeResults(person, $('#b64').text());
                     //self.getData(person);
                 }
             }
@@ -224,6 +218,39 @@ var prodRecommender = (function () {
             xmlhttp.setRequestHeader("Content-type", "application/json");
             xmlhttp.setRequestHeader("X-Access-Token", "xlFXHAhIh48ETvcrYG6RhnYGAIUFqHP5NyMv");
             xmlhttp.send(JSON.stringify(image));
+        },
+        analyzeResults: function(person,img){
+            var self = this;
+            var container = $('.product-recommend');
+            container.after(`
+                <div class="analyzerResults text-center">
+                    <div class="analyzer-img-container">
+                        
+                    </div>
+                    <div class="image-description">
+                        <p>${person.age} years</p>
+                        <p>${person.gender} gender</p>
+                        <p> ${person.emotion} emotion</p>
+                        <p>${person.hairColor} color hairs</p>
+                        <p>${person.hairLength} hair length</p>
+                        <button class="o-btn o-btn--ternary upload-again">Upload again</button>
+                    </div>
+                </div>
+            `);
+
+            $('.product-recommend').fadeOut();
+            $('.analyzerResults').fadeIn();
+
+            var image = new Image();
+            image.src = img;
+            document.getElementsByClassName('analyzer-img-container')[0].appendChild(image);
+            self.uploadAgain();
+        },
+        uploadAgain: function(){
+            $('.upload-again').on('click', function(){
+                $('.product-recommend').fadeIn();
+                $('.analyzerResults').fadeOut().remove();
+            });
         },
         getData: function (person) {
             $.ajax({
