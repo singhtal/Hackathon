@@ -230,6 +230,7 @@ var prodRecommender = (function () {
         },
         analyzeResults: function(person,img){
             var self = this;
+            var ageRange = (person.age - 5) + ' to ' + (person.age + 5) ;
             var container = $('.product-recommend');
             container.after(`
                 <div class="analyzerResults text-center">
@@ -238,11 +239,10 @@ var prodRecommender = (function () {
                         
                     </div>
                     <div class="image-description">
-                        <p>${person.age} years</p>
-                        <p>${person.gender} gender</p>
-                        <p> ${person.emotion} emotion</p>
-                        <p>${person.hairColor} color hairs</p>
+                        <p>${person.hairColor} color hair</p>
                         <p>${person.hairLength} hair length</p>
+                        <p> ${person.emotion} emotion</p>
+                        <p>${ageRange} years</p>
                         <button class="o-btn o-btn--ternary upload-again">Upload again</button>
                     </div>
                 </div>
@@ -271,15 +271,14 @@ var prodRecommender = (function () {
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function (result) {
-                    console.log(result);
-                    self.productListing(result);
+                    //console.log(result);
+                    self.productListing(result['products'], result['articles']);
                 },
                 data: JSON.stringify(person)
             });
         },
-        productListing: function(products){
+        productListing: function(products, articles){
             //append products here
-            alert('appending products');
             $('.analyzerResults').after(`
                 <div class="productListing text-center">
                     <h2>Explore Our Products</h2>
@@ -296,6 +295,7 @@ var prodRecommender = (function () {
             `);
 
             products.forEach(function(product, index){
+                console.log(product);
                 $('.productContainer').append(
                     `
                     <div class="prod-item">
@@ -306,20 +306,24 @@ var prodRecommender = (function () {
                     </div>
                     `
                 )
-
-
-                $('.articleContainer').append(`
-                    <div class="article-item">                      
-                        <a href="${product.article.url}">
-                            <img src="${product.article.image}"></img>
-                            <div class="article-text-container">
-                                <h4>${product.article.title}</h3>
-                                <p>${product.article.text}</p>
-                            </div>
-                        </a>
-                    </div>
-                `)
             });
+
+            articles.forEach(function(article, index){
+                console.log(article);
+                $('.articleContainer').append(`
+                <div class="article-item">                      
+                    <a href="${article.article.url}">
+                        <img src="${article.article.image}"></img>
+                        <div class="article-text-container">
+                            <h4>${article.article.title}</h3>
+                            <p>${article.article.text}</p>
+                        </div>
+                    </a>
+                </div>
+            `)
+            });
+
+
 
 
             products
