@@ -230,7 +230,7 @@ var prodRecommender = (function () {
         },
         analyzeResults: function(person,img){
             var self = this;
-            var ageRange = (person.age - 5) + ' to ' + (person.age + 5) ;
+            var ageRange = (person.age - 5) + '-' + (person.age + 5) ;
             var container = $('.product-recommend');
             container.after(`
                 <div class="analyzerResults text-center">
@@ -295,7 +295,7 @@ var prodRecommender = (function () {
             `);
 
             products.forEach(function(product, index){
-                console.log(product);
+                // console.log(product);
                 $('.productContainer').append(
                     `
                     <div class="prod-item">
@@ -309,7 +309,7 @@ var prodRecommender = (function () {
             });
 
             articles.forEach(function(article, index){
-                console.log(article);
+                //console.log(article);
                 $('.articleContainer').append(`
                 <div class="article-item">                      
                     <a href="${article.article.url}">
@@ -322,11 +322,6 @@ var prodRecommender = (function () {
                 </div>
             `)
             });
-
-
-
-
-            products
 
         }
     }
