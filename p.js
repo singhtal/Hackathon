@@ -207,6 +207,10 @@ var prodRecommender = (function () {
                         return parsedResult.race[a] > parsedResult.race[b] ? a : b;
                     });
 
+                    if(race == 'asian') {
+                        race = 'mix' ;
+                    }
+
 
                     person = {
                         age: age,
@@ -272,12 +276,12 @@ var prodRecommender = (function () {
                 contentType: 'application/json',
                 success: function (result) {
                     //console.log(result);
-                    self.productListing(result['products'], result['articles']);
+                    self.productListing(result['products_hair'], result['products_skin'], result['articles']);
                 },
                 data: JSON.stringify(person)
             });
         },
-        productListing: function(products, articles){
+        productListing: function(products_hair, products_skin, articles){
             //append products here
             $('.analyzerResults').after(`
                 <div class="productListing text-center">
@@ -293,8 +297,23 @@ var prodRecommender = (function () {
 
                 </div>
             `);
+            // var myHair = product['hair'];
+            products_hair.forEach(function(product, index){
+                // console.log(product);
+                $('.productContainer').append(
+                    `
+                    <div class="prod-item">
+                        <a href="${product.productUrl}">
+                            <img src="${product.imgurl}" alt="${product.productUrl}"></img>
+                            <p>${product.productName}</p>
+                        </a>
+                    </div>
+                    `
+                )
+            });
 
-            products.forEach(function(product, index){
+            //var mySkin = product['hair'];
+            products_skin.forEach(function(product, index){
                 // console.log(product);
                 $('.productContainer').append(
                     `
