@@ -233,6 +233,7 @@ var prodRecommender = (function () {
             var container = $('.product-recommend');
             container.after(`
                 <div class="analyzerResults text-center">
+                <h2>Analysis Results</h2>
                     <div class="analyzer-img-container">
                         
                     </div>
@@ -259,6 +260,7 @@ var prodRecommender = (function () {
             $('.upload-again').on('click', function(){
                 $('.product-recommend').fadeIn();
                 $('.analyzerResults').fadeOut().remove();
+                $('.productListing').remove();
             });
         },
         getProductData: function (person) {
@@ -277,6 +279,7 @@ var prodRecommender = (function () {
         },
         productListing: function(products){
             //append products here
+            alert('appending products');
             $('.analyzerResults').after(`
                 <div class="productListing text-center">
                     <h2>Explore Our Products</h2>
