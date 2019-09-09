@@ -53,7 +53,6 @@ const DoveProducts = mongoose.model('products',
 // );
 //
 // newproduct.save().then(() => {
-//     console.log('product saved');
 // })
 
 
@@ -69,8 +68,7 @@ app.get('/', function(req, res) {
     var hairLength= (userObj.hairLength).toLowerCase();
     var gender = (userObj.gender).toLowerCase();
     var userage = parseInt(userObj.age);
-
-    console.log(hairColor, hairLength, gender, userage);
+    var finalResults = {};
 
     DoveProducts.find(
       {
@@ -83,10 +81,30 @@ app.get('/', function(req, res) {
 
       function (err, hairproducts) {
         if (err) return console.error(err);
+        finalResults['products'] = hairproducts;
         console.log(hairproducts.length);
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(hairproducts));
       });
+
+      DoveProducts.find(
+        {
+          'suitableFor.minage': { $lt: userage },
+          'suitableFor.maxage': { $gt: userage },
+          'suitableFor.gender': gender
+        },
+
+        function (err, articlesList) {
+          if (err) return console.error(err);
+          finalResults['articles'] = articlesList;
+          console.log(articlesList.length);
+
+          console.log('result here ---->>>>')
+          console.log(JSON.stringify(finalResults));
+
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(finalResults));
+
+        });
+
 
 });
 
