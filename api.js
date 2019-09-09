@@ -67,38 +67,58 @@ app.get('/', function(req, res) {
     var hairColor = (userObj.hairColor).toLowerCase();
     var hairLength= (userObj.hairLength).toLowerCase();
     var gender = (userObj.gender).toLowerCase();
+    var skinColor = (userObj.race).toLowerCase();
     var userage = parseInt(userObj.age);
     var finalResults = {};
 
+// for hair products
     DoveProducts.find(
       {
         'suitableFor.minage': { $lt: userage },
         'suitableFor.maxage': { $gt: userage },
-        'suitableFor.gender': gender,
-        'suitableFor.hairColor': hairColor,
-        'suitableFor.hairLength': hairLength
+        'suitableFor.gender': gender.toLowerCase(),
+        'suitableFor.hairColor': hairColor.toLowerCase(),
+        'suitableFor.hairLength': hairLength.toLowerCase()
       },
 
       function (err, hairproducts) {
         if (err) return console.error(err);
-        finalResults['products'] = hairproducts;
-        console.log(hairproducts.length);
+        finalResults['products_hair'] = hairproducts;
       });
 
+
+// for skin DoveProducts
+DoveProducts.find(
+  {
+    'suitableFor.minage': { $lt: userage },
+    'suitableFor.maxage': { $gt: userage },
+    'suitableFor.gender': gender.toLowerCase(),
+    'suitableFor.skinColor': skinColor.toLowerCase()
+  },
+
+  function (err, skinproducts) {
+    if (err) return console.error(err);
+    finalResults['products_skin'] = skinproducts;
+    console.log(skinproducts.length);
+    //console.log(skinproducts);
+  });
+
+
+// for articles
       DoveProducts.find(
         {
           'suitableFor.minage': { $lt: userage },
           'suitableFor.maxage': { $gt: userage },
-          'suitableFor.gender': gender
+          'suitableFor.gender': gender.toLowerCase()
         },
 
         function (err, articlesList) {
           if (err) return console.error(err);
           finalResults['articles'] = articlesList;
-          console.log(articlesList.length);
+          //console.log(articlesList.length);
 
-          console.log('result here ---->>>>')
-          console.log(JSON.stringify(finalResults));
+          // console.log('result here ---->>>>')
+          // console.log(JSON.stringify(finalResults));
 
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(finalResults));
