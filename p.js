@@ -70,6 +70,7 @@
 
 var prodRecommender = (function () {
     "use strict";
+    var person = {};
     return {
         createDOM : function(elem){
             var container = document.getElementsByClassName('product-recommend')[0];
@@ -101,15 +102,6 @@ var prodRecommender = (function () {
             `);
 
             this.fileHandler();
-            //remove below dummy code after the api development
-            // this.getProductData({
-            //     "age":63,
-            //     "gender":"male",
-            //     "emotion":"happiness",
-            //     "hairColor":"black",
-            //     "hairLength":"short",
-            //     "race":"asian"
-            //     });
         },
         fileHandler: function () {
             var self = this;
@@ -119,7 +111,7 @@ var prodRecommender = (function () {
                 // var file = eve.srcElement.files[0];
                 $('.img-user').removeClass('hide');
                 $('.click-img-container').addClass('hide');
-                $(this).parent().find('span:odd').toggleClass('hide');
+                //$(this).parent().find('.span').toggleClass('hide');
 
                 if (eve.target.files && eve.target.files[0]) {
                     var reader = new FileReader();
@@ -138,18 +130,17 @@ var prodRecommender = (function () {
                 // click final image from live preview webcam
                 //e.stopPropagation();
 
-                //video2image($('#photocanvas'),'capture');
                 document.getElementById("b64").innerHTML = video2image($('#photocanvas'),'capture');
                 video2image($('#photocanvas'), 'stop');
                 self.getDetails();
                 //$('.click-img-container').removeClass('hide');
-                $('.takephoto').find('span:odd').toggleClass('hide');
+                $('.takephoto').find('span').toggleClass('hide');
             });
 
             $('.takepicbtn').on('click', function (e) {
                 $('.img-user').addClass('hide');
                 $('.click-img-container').removeClass('hide');
-                $(this).parent().find('span:odd').toggleClass('hide');
+                $(this).parent().find('span').toggleClass('hide');
                 self.takephoto();
             });
 
@@ -167,6 +158,7 @@ var prodRecommender = (function () {
             });
         },
         getDetails: function () {
+
             var self = this;
             var can = document.getElementById("b64");
             var img = document.getElementById("theimage");
@@ -180,16 +172,23 @@ var prodRecommender = (function () {
             var image = {
                 image: strImage
             };
+
+           var hairType =  self.fetchHairType(strImage);
+
             var xmlhttp = new XMLHttpRequest();
             var result, parsedResult;
 
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
                     result = xmlhttp.responseText;
+                    if(JSON.parse(result).objects.length > 2){
+                        alert('please upload image with one person only');
+                        window.location.reload();
+                    }
                     parsedResult = JSON.parse(result)["objects"][1]["attributes"];
                     $('.img-user').removeClass('scanning');
 
-                    var person, age, gender, emotion, hairColor, hairLength, race;
+                    var age, gender, emotion, hairColor, hairLength, race;
 
                     age = parsedResult.age;
                     gender = parsedResult.gender;
@@ -211,15 +210,13 @@ var prodRecommender = (function () {
                         race = 'mix' ;
                     }
 
+                    person.age = age;
+                    person.gender = gender;
+                    person.emotion = emotion;
+                    person.hairColor = hairColor;
+                    person.hairLength = hairLength;
+                    person.race = race;
 
-                    person = {
-                        age: age,
-                        gender: gender,
-                        emotion: emotion,
-                        hairColor: hairColor,
-                        hairLength: hairLength,
-                        race: race
-                    }
                     // get data
                     //console.log(person);
                     self.analyzeResults(person, $('#b64').text());
@@ -232,9 +229,38 @@ var prodRecommender = (function () {
             xmlhttp.setRequestHeader("X-Access-Token", "xlFXHAhIh48ETvcrYG6RhnYGAIUFqHP5NyMv");
             xmlhttp.send(JSON.stringify(image));
         },
+
+        fetchHairType: function(strImg){
+            var xmlhttp = new XMLHttpRequest();
+            var result, parsedResult;
+
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                    result = xmlhttp.responseText;
+                    var parsedResult = JSON.parse(result)['media']['faces'][0]['tags'];
+
+                    var hairType = parsedResult[35].value == 'yes' ? 'straight' : parsedResult[36].value == 'yes' ? 'curly' : 'normal' ; 
+                    //$('.img-user').removeClass('scanning');
+                    person.hairType = hairType;
+
+                }
+            }
+
+            var betaJSON = {
+                api_key: 'd45fd466-51e2-4701-8da8-04351c872236',
+                detection_flags: 'cropface,recognition,content,classifiers,basicpoints,propoints',
+                file_base64: strImg,
+                original_filename: 'test.jpg'
+            }
+
+            xmlhttp.open("POST", "https://www.betafaceapi.com/api/v2/media");
+            xmlhttp.setRequestHeader("Content-type", "application/json");
+            //xmlhttp.setRequestHeader("X-Access-Token", "xlFXHAhIh48ETvcrYG6RhnYGAIUFqHP5NyMv");
+            xmlhttp.send(JSON.stringify(betaJSON));
+        },
         analyzeResults: function(person,img){
             var self = this;
-            var ageRange = (person.age - 5) + '-' + (person.age + 5) ;
+            var ageRange = (person.age - 3) + '-' + (person.age + 2) ;
             var container = $('.product-recommend');
             container.after(`
                 <div class="analyzerResults text-center">
@@ -245,6 +271,7 @@ var prodRecommender = (function () {
                     <div class="image-description">
                         <p>${person.hairColor} color hair</p>
                         <p>${person.hairLength} hair length</p>
+                        <p>${person.hairType} hair type</p>
                         <p> ${person.emotion} emotion</p>
                         <p>${ageRange} years</p>
                         <button class="o-btn o-btn--ternary upload-again">Upload again</button>
