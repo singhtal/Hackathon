@@ -1,0 +1,168 @@
+
+        .product-recommend, .analyzerResults{
+            margin: 50px 0 20px 0;
+        }
+        .product-recommend p {
+            margin-bottom: 20px;
+        }
+        .img-user{
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+        .img-user img{
+            box-shadow: 0px 0px 10px 0px #ccc;
+            border-radius: 10px;
+            /* min-height: 240px; */
+            max-height: 280px;
+        }
+        .product-form-control > *{
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .analyzerResults{
+            margin-bottom: 50px;
+        }
+        .analyzerResults > *{
+            display: inline-block;
+            vertical-align: top;
+        }
+        .analyzerResults h2{
+            display: block;
+            margin-bottom: 40px;
+        }
+        .analyzer-img-container img{
+            min-height: 240px;
+            max-height: 280px;
+        }
+        .image-description p{
+            text-transform: capitalize;
+            padding-left: 20px;
+            position: relative;
+            margin-bottom: 5px;
+        }
+
+        .image-description p::before{
+            content: "";
+            position: absolute;
+            background: url("https://www.dove.com/etc/ui/dove/clientlibs/core/core/svgs/stack/svg/sprite.stack.svg#tick-gold");
+            background-size: contain;
+            width: 20px;
+            height: 15px;
+            background-position: left center;
+            left: -8px;
+            top: 5px;
+        }
+        .upload-again{
+            margin-top: 20px;
+        }
+
+        .image-description{
+            padding: 10px 20px;
+            text-align: left;
+        }
+        .productContainer, .articleContainer{
+            max-width: 334px;
+            margin: 40px auto;
+            overflow: auto;
+        }
+
+        @media (min-width: 992px){
+            .productContainer, .articleContainer{
+                max-width: 768px;
+            }
+        }
+
+        .prod-item, .article-item{
+            float:left;
+            width: 100%;
+            vertical-align: top;
+            margin-bottom: 35px;
+        }
+
+        @media (min-width: 992px){
+            .prod-item, .article-item{
+                width: 33.3%;
+                margin-bottom: 10px;
+            }
+        }
+
+        .prod-item img{
+            max-width: 150px;
+            transition: 0.2s all ease;
+        }
+
+        .prod-item:hover img{
+            transform: scale(1.05);
+        }
+
+        .prod-item p{
+            margin-top: 10px;
+            color: #002663;
+            font-size: 14px;
+        }
+
+        .prod-item a{
+            display: block;
+            text-decoration: none;
+        }
+
+        .article-item img{
+            border-radius: 100%;
+            max-width: 120px;
+        }
+
+        .article-item a{
+            text-decoration: none;
+        }
+
+        .article-text-container{
+            padding: 15px 20px;
+            margin: 0 20px;
+            background-color: #eeeeee54;
+            box-shadow: 3px 5px 5px #eee;
+            overflow: auto;
+        }
+
+        .article-text-container h4{
+            margin: 10px 0;
+            color: #3475ad;
+        }
+        .article-text-container p{
+            color: #3475ad;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+        .click-img-container{
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+        }
+
+    .scanning::after {
+        content: '';
+        text-align: center;
+        font-size: 25px;
+        color: #fff;
+        line-height: 46px;
+        font-weight: 700;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50px;
+        background-image: linear-gradient(to bottom, #0026636b, #002663cf);
+        animation: scanning 1.7s linear infinite;
+    }
+
+    @keyframes scanning {
+        50% {
+            transform: translate(0, 220px);
+        }
+
+        100% {
+            transform: translate(0, 0);
+        }
+    }
