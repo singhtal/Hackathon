@@ -441,7 +441,8 @@
   .stars-4:after { width: 80%; }
   .stars-4p5:after { width: 90%; }
   .stars-5:after { width: 100; }
-  checkbox-wrapper{
+
+.checkbox-wrapper{
     padding-left: 50px;
 }
 
@@ -514,6 +515,4 @@ span.c-form-checkbox__label-copy:after {
     margin: 0 auto;
     margin-top: 20px;
 }
-
-
 
