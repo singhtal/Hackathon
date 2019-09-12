@@ -78,6 +78,7 @@ DoveProducts.find(
 
     // fallback call here
     if(skinproducts.length < 1){
+      if(userage > 5){
       DoveProducts.find(
         {
           'suitableFor.default': "yes"
@@ -88,6 +89,20 @@ DoveProducts.find(
           finalResults['products_skin'] = skinproducts;
           console.log('fall back length:'+ skinproducts.length);
         }).limit(3);
+      } else {
+        // baby fallback
+        DoveProducts.find(
+          {
+            'suitableFor.minage': { $lte: userage },
+            'suitableFor.maxage': { $gte: userage }
+          },
+
+          function (err, skinproducts) {
+            if (err) return console.error(err);
+            finalResults['products_skin'] = skinproducts;
+            console.log('baby fall back length:'+ skinproducts.length);
+          }).limit(3);
+      }
     }
 
   }).limit(2);
