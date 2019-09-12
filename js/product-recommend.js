@@ -308,7 +308,8 @@ var prodRecommender = (function () {
             xmlhttp.setRequestHeader("Content-type", "application/json");
             //xmlhttp.setRequestHeader("X-Access-Token", "xlFXHAhIh48ETvcrYG6RhnYGAIUFqHP5NyMv");
             //xmlhttp.send(JSON.stringify(betaJSON));
-            person.hairType = 'fresh';
+            person.skinType = 'fresh';
+            person.hairType = 'normal';
         },
         analyzeResults: function (person, img) {
             var self = this;
@@ -354,7 +355,7 @@ var prodRecommender = (function () {
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function (result) {
-                    //console.log(result);
+                    console.log(result);
                     self.productListing(result['products_hair'], result['products_skin'], result['articles']);
                 },
                 data: JSON.stringify(person)
@@ -400,6 +401,7 @@ var prodRecommender = (function () {
                         <a href="${product.productUrl}">
                             <img src="${product.imgurl}" alt="${product.productUrl}"></img>
                             <p>${product.productName}</p>
+                            <button class="o-btn o-btn--primary buyBtn">Buy</button>
                         </a>
                     </div>
                     `
