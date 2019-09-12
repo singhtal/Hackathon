@@ -54,6 +54,7 @@
     padding-left: 20px;
     position: relative;
     margin-bottom: 5px;
+    font-weight: bold;
 }
 
 .image-description p::before {
@@ -122,6 +123,7 @@
     margin-top: 10px;
     color: #002663;
     font-size: 14px;
+    min-height: 52px;
 }
 
 .prod-item a {
@@ -309,4 +311,75 @@
     color: black;
     text-decoration: none;
     cursor: pointer;
+}
+
+.buyBtn{
+    margin-top: 10px;
+}
+.checkbox-wrapper p{
+    font-size: 14px;
+    padding-left: 10px;
+}
+.checkbox-wrapper input{
+    position: relative;
+}
+
+.email{
+    font-size: 1rem;
+    height: 50px;
+    line-height: 1.125rem!important;
+    letter-spacing: 0.0125rem;
+    padding: 0 15px;
+    color: #666;
+    font-weight: 400;
+    border-radius: 17px;
+    -webkit-appearance: none;
+    outline: none;
+    border: 1px solid #ccc;
+    display: block;
+    width: 300px;
+}
+
+.checkbox-wrapper input::before{
+    content: "";
+    position: absolute;
+    padding: 0;
+    border-radius: 3px;
+    cursor: pointer;
+    left: -13px;
+    top: -5px;
+    height: 25px;
+    width: 25px;
+    background: #fafafa;
+    box-shadow: inset 0 0.5px 3px 0 #aaa;
+    vertical-align: middle;
+}
+
+.checkbox-wrapper{
+    padding-left: 50px;
+}
+
+.checkbox-wrapper label{
+    text-align: left;
+    padding-left: 15px;
+    margin: 20px 0;
+}
+
+.checkbox-wrapper input:checked ::after{
+    content: "";
+    position: absolute;
+    border: solid #366aa5;
+    border-width: 0 0 2px 2px;
+    height: 7px;
+    width: 12px;
+    cursor: pointer;
+    left: 7px;
+    top: 11px;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+.subscribe{
+    display: block;
+    margin: auto;
+    margin-bottom: 50px;
 }
