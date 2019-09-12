@@ -74,8 +74,22 @@ DoveProducts.find(
   function (err, skinproducts) {
     if (err) return console.error(err);
     finalResults['products_skin'] = skinproducts;
-    console.log(skinproducts.length);
-    //console.log(skinproducts);
+    console.log('skin products length:'+ skinproducts.length);
+
+    // fallback call here
+    if(skinproducts.length < 1){
+      DoveProducts.find(
+        {
+          'suitableFor.default': "yes"
+        },
+
+        function (err, skinproducts) {
+          if (err) return console.error(err);
+          finalResults['products_skin'] = skinproducts;
+          console.log('fall back length:'+ skinproducts.length);
+        }).limit(3);
+    }
+
   }).limit(2);
 
 
@@ -87,7 +101,6 @@ if(userage == 0){
   userage = 1;
 }
 
-console.log('userage '+ userage);
 
 DoveProducts.find(
   {
@@ -98,8 +111,6 @@ DoveProducts.find(
   function (err, skinproducts) {
     if (err) return console.error(err);
     finalResults['products_skin'] = skinproducts;
-    console.log('baby length '+skinproducts.length);
-    //console.log(skinproducts);
   }).limit(3);
 
 }
@@ -119,8 +130,7 @@ if(userage > 5){
           finalResults['articles'] = articlesList;
 
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(finalResults));
-
+        setTimeout(function() { res.end(JSON.stringify(finalResults)) }, 1000);
         }).limit(3);
 
 } else {
@@ -135,7 +145,7 @@ if(userage > 5){
       finalResults['articles'] = articlesList;
 
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(finalResults));
+    setTimeout(function(){ res.end(JSON.stringify(finalResults)) }, 1000);
 
     }).limit(3);
 }
