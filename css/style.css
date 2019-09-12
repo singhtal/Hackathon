@@ -87,9 +87,11 @@
 
 @media (min-width: 992px) {
 
-    .productContainer,
     .articleContainer {
         max-width: 768px;
+    }
+    .productContainer {
+        max-width: 1024px;
     }
 }
 
@@ -103,10 +105,12 @@
 
 @media (min-width: 992px) {
 
-    .prod-item,
     .article-item {
         width: 33.3%;
         margin-bottom: 10px;
+    }
+    .prod-item {
+        width: 25%;
     }
 }
 
@@ -150,14 +154,14 @@
 
 .article-text-container h4 {
     margin: 10px 0;
-    color: #3475ad;
+    color: #002663;
 }
 
 .article-text-container p {
-    color: #3475ad;
-    font-size: 12px;
-    line-height: 1.8;
-    height: 40px;
+    color: #666;
+    font-size: 15px;
+    line-height: 1.2;
+    height: 39px;
     overflow: hidden;
 }
 
@@ -316,12 +320,11 @@
 .buyBtn{
     margin-top: 10px;
 }
-.checkbox-wrapper p{
-    font-size: 14px;
-    padding-left: 10px;
-}
+
 .checkbox-wrapper input{
     position: relative;
+    margin: auto;
+    display: inline-block;
 }
 
 .email{
@@ -337,7 +340,7 @@
     outline: none;
     border: 1px solid #ccc;
     display: block;
-    width: 300px;
+    width: 100%;
 }
 
 .checkbox-wrapper input::before{
@@ -382,4 +385,49 @@
     display: block;
     margin: auto;
     margin-bottom: 50px;
+}
+.checkbox-wrapper .c-form-checkbox {
+    opacity: 0;
+    position: absolute;
+    left: 0;
+}
+span.c-form-checkbox__label-copy {
+    display: inline-block;
+    padding-left: 38px;
+    position: relative;
+}
+span.c-form-checkbox__label-copy:before {
+    content: '';
+    border-radius: 3px;
+    cursor: pointer;
+    height: 25px;
+    width: 25px;
+    background: #fafafa;
+    box-shadow: inset 0 0.5px 3px 0 #aaa;
+    vertical-align: middle;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+span.c-form-checkbox__label-copy:after {
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    content: "";
+    border: solid #366aa5;
+    border-width: 0 0 2px 2px;
+    height: 7px;
+    width: 12px;
+    position: absolute;
+    cursor: pointer;
+    left: 7px;
+    top: 7px;
+    opacity: 0;
+}
+.checkbox-wrapper input[type=checkbox]:checked+span.c-form-checkbox__label-copy:after {
+    opacity: 1;
+}
+.checkbox-wrapper {
+    max-width: 500px;
+    margin: 0 auto;
+    margin-top: 20px;
 }
