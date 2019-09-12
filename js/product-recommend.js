@@ -75,7 +75,7 @@ var prodRecommender = (function () {
     return {
         productRecommenderInit: function () {
             var self = this;
-            $('body').append('<div class="o-btn o-btn--secondary ai-cta">Image analyzer</div>');
+            $('body').append('<div class="ai-cta">Your Personal Gromming Expert</div>');
             self.modalFunction();
 
             $('.ai-cta').on('click', function () {
@@ -107,6 +107,7 @@ var prodRecommender = (function () {
             window.onclick = function (event) {
                 if (event.target == modal) {
                     modal.style.display = "none";
+
                 }
             }
         },
@@ -124,7 +125,7 @@ var prodRecommender = (function () {
             </div>
 
             <div class="click-img-container hide">
-                <canvas id="photocanvas" width="216" height="162"></canvas>
+                <canvas id="photocanvas" width="320" height="240"></canvas>
             </div>
 
             <div class="product-form-control" style="margin-bottom: 100px; margin-top: 30px">
@@ -194,8 +195,8 @@ var prodRecommender = (function () {
             // user wants to take photo, not upload
 
             video2image($("#photocanvas"), {
-                width: 216,
-                height: 162,
+                width: 320,
+                height: 240,
                 autoplay: true,
                 onsuccess: function () {},
                 onerror: function () {}
@@ -286,8 +287,10 @@ var prodRecommender = (function () {
                     result = xmlhttp.responseText;
                     var parsedResult = JSON.parse(result)['media']['faces'][0]['tags'];
                     var skinType = parsedResult[28].value == 'yes'  ? 'pale' : 'fresh' ;
-                    if(typeOf(skinType) === undefined){
-                        skinType = 'fresh';
+
+                    //Need to be removed.
+                    if(typeOf(skinType) === undefined){		
+                        skinType = 'fresh';		
                     }
                     person.skinType = skinType;
                     var hairType = parsedResult[35].value == 'yes' ? 'straight' : parsedResult[36].value == 'yes' ? 'curly' : 'normal';
@@ -355,7 +358,7 @@ var prodRecommender = (function () {
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function (result) {
-                    console.log(result);
+                    //console.log(result);
                     self.productListing(result['products_hair'], result['products_skin'], result['articles']);
                 },
                 data: JSON.stringify(person)
@@ -401,7 +404,7 @@ var prodRecommender = (function () {
                         <a href="${product.productUrl}">
                             <img src="${product.imgurl}" alt="${product.productUrl}"></img>
                             <p>${product.productName}</p>
-                            <button class="o-btn o-btn--primary buyBtn">Buy</button>
+                            <button class="o-btn o-btn--primary buyBtn">Buy</button>	
                         </a>
                     </div>
                     `
