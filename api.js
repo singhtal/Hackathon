@@ -9,7 +9,7 @@ var server = http.createServer(app);
 //connect to mongoose
 const mongoose = require('mongoose');
 mongoose.connect('mongodb+srv://talvinder:7838@Mongo@titans-6igk3.mongodb.net/test?retryWrites=true&w=majority',
-{useNewUrlParser: true});
+{useNewUrlParser: true}).catch(error => console.error(error));
 
 const DoveProducts = mongoose.model('products',
 {
@@ -31,31 +31,6 @@ const DoveProducts = mongoose.model('products',
 }
 );
 
-
-// const newproduct = new DoveProducts(
-//   {
-//       productName: "MEN+CARE FRESH & CLEAN FORTIFYING 2IN1 SHAMPOO AND CONDITIONER",
-//       productUrl: "https://www.dove.com/uk/men-care/hair-care/men-care-fresh-clean-fortifying-2in1-shampoo-and-conditioner.html",
-//       imgurl: "https://www.dove.com/content/dam/unilever/dove/united_kingdom/pack_shot/fortifying_8710908381195_t1-1408992.png.ulenscale.460x460.png",
-//       artile: {
-//         image: "https://www.dove.com/content/dam/unilever/dove/global/general_image/personal_care_unidentified/personal_care_unidentified/day04_shot02_022_teaser-280000.jpg.ulenscale.218x218.jpg",
-//         text: "For men, dry hair can be caused by a lot of things, from hot water to drying methods, but it’s easy to treat. Here’s how to handle dry hair with some simple changes",
-//         url: "https://www.dove.com/uk/stories/tips-and-how-to/grooming-tips/how-to-treat-dry-hair.html"
-//       },
-//       suitableFor: {
-//           minage : 50,
-//           maxage: 70,
-//           gender: "male",
-//           hairColor: "black",
-//           hairLength: "short"
-//       }
-//   }
-// );
-//
-// newproduct.save().then(() => {
-// })
-
-
 app.get('/', function(req, res) {
     //res.send(req);
     var url = require('url');
@@ -67,7 +42,7 @@ app.get('/', function(req, res) {
     var hairColor = (userObj.hairColor).toLowerCase();
     var hairLength= (userObj.hairLength).toLowerCase();
     var gender = (userObj.gender).toLowerCase();
-    var skinColor = (userObj.race).toLowerCase();
+    var skinColor = (userObj.skinType).toLowerCase();
     var userage = parseInt(userObj.age);
     var finalResults = {};
 
@@ -115,10 +90,6 @@ DoveProducts.find(
         function (err, articlesList) {
           if (err) return console.error(err);
           finalResults['articles'] = articlesList;
-          //console.log(articlesList.length);
-
-          // console.log('result here ---->>>>')
-          // console.log(JSON.stringify(finalResults));
 
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(finalResults));
