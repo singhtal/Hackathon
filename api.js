@@ -59,7 +59,7 @@ app.get('/', function(req, res) {
       function (err, hairproducts) {
         if (err) return console.error(err);
         finalResults['products_hair'] = hairproducts;
-      });
+      }).limit(3);
 
 
 // for skin DoveProducts
@@ -76,7 +76,7 @@ DoveProducts.find(
     finalResults['products_skin'] = skinproducts;
     console.log(skinproducts.length);
     //console.log(skinproducts);
-  });
+  }).limit(3);
 
 
 // for articles
@@ -94,7 +94,7 @@ DoveProducts.find(
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(finalResults));
 
-        });
+        }).limit(3);
 
 
 });
