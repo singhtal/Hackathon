@@ -4,66 +4,66 @@
     var canvas;
     var video;
 
-    video2image = function (elem,options) {
-    canvas = elem[0] // our canvas
+    video2image = function (elem, options) {
+        canvas = elem[0] // our canvas
 
-    if (options === 'isSupported') {
-        return isSupported;
-    } else if (options === 'capture') {
-        return canvas.toDataURL();
-    } else if (options === 'stop') {
-        video.pause();
-        video.srcObject.getTracks().forEach(track => track.stop())
-        // console.log($('#'+video.srcObject.id).length)
-        return false;
-    } else if (options === 'start') {
-        return video.play();
-    } else {
-        // These are the defaults.
-        var settings = $.extend({
-            width: canvas.clientWidth,
-            height: canvas.clientHeight,
-            autoplay: true,
-            onerror: function () {},
-            onsuccess: function () {}
-        }, options);
+        if (options === 'isSupported') {
+            return isSupported;
+        } else if (options === 'capture') {
+            return canvas.toDataURL();
+        } else if (options === 'stop') {
+            video.pause();
+            video.srcObject.getTracks().forEach(track => track.stop())
+            // console.log($('#'+video.srcObject.id).length)
+            return false;
+        } else if (options === 'start') {
+            return video.play();
+        } else {
+            // These are the defaults.
+            var settings = $.extend({
+                width: canvas.clientWidth,
+                height: canvas.clientHeight,
+                autoplay: true,
+                onerror: function () {},
+                onsuccess: function () {}
+            }, options);
 
-        // canvas context
-        var canvasContext = canvas.getContext('2d');
+            // canvas context
+            var canvasContext = canvas.getContext('2d');
 
-        // video element
-        video = document.createElement('video');
+            // video element
+            video = document.createElement('video');
 
-        // Update our canvas dimensions
-        $(canvas).prop("width", settings.width).prop("height", settings.height);
+            // Update our canvas dimensions
+            $(canvas).prop("width", settings.width).prop("height", settings.height);
 
-        // requestAnimationFrame
-        window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+            // requestAnimationFrame
+            window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
-        // Write video to our canvas
-        function tocanvas() {
-            canvasContext.drawImage(video, 0, 0, settings.width, settings.height);
-            window.requestAnimationFrame(tocanvas);
-        }
-
-        // Set up video
-        if (isSupported) {
-            //navigator.webkitGetUserMedia({
-            navigator.getUserMedia_({
-                video: true
-            }, function (stream) {
-                video.srcObject = stream;
-                if (settings.autoplay)
-                    video.play();
+            // Write video to our canvas
+            function tocanvas() {
+                canvasContext.drawImage(video, 0, 0, settings.width, settings.height);
                 window.requestAnimationFrame(tocanvas);
-                settings.onsuccess();
-            }, settings.onerror);
+            }
+
+            // Set up video
+            if (isSupported) {
+                //navigator.webkitGetUserMedia({
+                navigator.getUserMedia_({
+                    video: true
+                }, function (stream) {
+                    video.srcObject = stream;
+                    if (settings.autoplay)
+                        video.play();
+                    window.requestAnimationFrame(tocanvas);
+                    settings.onsuccess();
+                }, settings.onerror);
+            }
+            elem.css({
+                width: settings.width,
+                height: settings.height
+            });
         }
-     elem.css({
-            width: settings.width,
-            height: settings.height
-        });
-    }
     }
 
 }());
@@ -71,10 +71,49 @@
 var prodRecommender = (function () {
     "use strict";
     var person = {};
+    var aiContainer, aiWrapper;
     return {
-        createDOM : function(elem){
-            var container = document.getElementsByClassName('product-recommend')[0];
-            $(container).append(`
+        productRecommenderInit: function () {
+            var self = this;
+            $('body').append('<div class="o-btn o-btn--secondary ai-cta">Image analyzer</div>');
+            self.modalFunction();
+
+            $('.ai-cta').on('click', function () {
+                self.createDOM('modal-content');
+            });
+        },
+        modalFunction: function () {
+            // Get the modal
+            var modal = document.getElementById("myModal");
+
+            // Get the button that opens the modal
+            var btn = document.getElementsByClassName("ai-cta")[0];
+
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName("close")[0];
+
+            // When the user clicks on the button, open the modal
+            btn.onclick = function () {
+                modal.style.display = "block";
+            }
+
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function () {
+                modal.style.display = "none";
+            }
+
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function (event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+        },
+        createDOM: function (elem) {
+            aiContainer =  $('.'+elem);
+            //var container = document.getElementsByClassName(elem)[0];
+            aiContainer.append(`
+            <div class="ai-wrapper">
             <div class="img-container text-center">
             <h2 class="u-mb-small">Please upload your picture</h2>
             <p>we will recommend products as per your needs</p>
@@ -99,8 +138,10 @@ var prodRecommender = (function () {
                 <canvas class="hidden" id="b64" crossorigin="anonymous"></canvas>
             </div>
         </div>
+        </div>
             `);
 
+          aiWrapper = aiContainer.find('.ai-wrapper');  
             this.fileHandler();
         },
         fileHandler: function () {
@@ -130,17 +171,19 @@ var prodRecommender = (function () {
                 // click final image from live preview webcam
                 //e.stopPropagation();
 
-                document.getElementById("b64").innerHTML = video2image($('#photocanvas'),'capture');
+                document.getElementById("b64").innerHTML = video2image($('#photocanvas'), 'capture');
                 video2image($('#photocanvas'), 'stop');
                 self.getDetails();
                 //$('.click-img-container').removeClass('hide');
                 $('.takephoto').find('span').toggleClass('hide');
+                $('.click-img-container').removeClass('scanning');
             });
 
             $('.takepicbtn').on('click', function (e) {
                 $('.img-user').addClass('hide');
                 $('.click-img-container').removeClass('hide');
                 $(this).parent().find('span').toggleClass('hide');
+                $('.click-img-container').addClass('scanning');
                 self.takephoto();
             });
 
@@ -148,7 +191,7 @@ var prodRecommender = (function () {
 
         takephoto: function () {
             // user wants to take photo, not upload
-            
+
             video2image($("#photocanvas"), {
                 width: 216,
                 height: 162,
@@ -173,7 +216,7 @@ var prodRecommender = (function () {
                 image: strImage
             };
 
-           var hairType =  self.fetchHairType(strImage);
+            self.fetchHairType(strImage);
 
             var xmlhttp = new XMLHttpRequest();
             var result, parsedResult;
@@ -181,7 +224,7 @@ var prodRecommender = (function () {
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
                     result = xmlhttp.responseText;
-                    if(JSON.parse(result).objects.length > 2){
+                    if (JSON.parse(result).objects.length > 2) {
                         alert('please upload image with one person only');
                         window.location.reload();
                     }
@@ -202,25 +245,28 @@ var prodRecommender = (function () {
                         return parsedResult.hair.cut[a] > parsedResult.hair.cut[b] ? a : b;
                     });
 
-                    race = Object.keys(parsedResult.race).reduce(function (a, b) {
-                        return parsedResult.race[a] > parsedResult.race[b] ? a : b;
-                    });
+                    // race = Object.keys(parsedResult.race).reduce(function (a, b) {
+                    //     return parsedResult.race[a] > parsedResult.race[b] ? a : b;
+                    // });
 
-                    if(race == 'asian') {
-                        race = 'mix' ;
-                    }
+                    // if (race == 'asian') {
+                    //     race = 'mix';
+                    // }
 
                     person.age = age;
                     person.gender = gender;
                     person.emotion = emotion;
                     person.hairColor = hairColor;
                     person.hairLength = hairLength;
-                    person.race = race;
+                    // person.race = race;
 
                     // get data
                     //console.log(person);
-                    self.analyzeResults(person, $('#b64').text());
-                    self.getProductData(person);
+                    setTimeout(function(){ 
+                        self.analyzeResults(person, $('#b64').text());
+                        self.getProductData(person);
+                    }, 2000);
+
                 }
             }
 
@@ -230,7 +276,7 @@ var prodRecommender = (function () {
             xmlhttp.send(JSON.stringify(image));
         },
 
-        fetchHairType: function(strImg){
+        fetchHairType: function (strImg) {
             var xmlhttp = new XMLHttpRequest();
             var result, parsedResult;
 
@@ -238,8 +284,9 @@ var prodRecommender = (function () {
                 if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
                     result = xmlhttp.responseText;
                     var parsedResult = JSON.parse(result)['media']['faces'][0]['tags'];
-
-                    var hairType = parsedResult[35].value == 'yes' ? 'straight' : parsedResult[36].value == 'yes' ? 'curly' : 'normal' ; 
+                    var skinType = parsedResult[28].value == 'yes'  ? 'pale' : 'fresh' ;
+                    person.skinType = skinType;
+                    var hairType = parsedResult[35].value == 'yes' ? 'straight' : parsedResult[36].value == 'yes' ? 'curly' : 'normal';
                     //$('.img-user').removeClass('scanning');
                     person.hairType = hairType;
 
@@ -258,11 +305,11 @@ var prodRecommender = (function () {
             //xmlhttp.setRequestHeader("X-Access-Token", "xlFXHAhIh48ETvcrYG6RhnYGAIUFqHP5NyMv");
             xmlhttp.send(JSON.stringify(betaJSON));
         },
-        analyzeResults: function(person,img){
+        analyzeResults: function (person, img) {
             var self = this;
-            var ageRange = (person.age - 3) + '-' + (person.age + 2) ;
-            var container = $('.product-recommend');
-            container.after(`
+            var ageRange = (person.age - 3) + '-' + (person.age + 2);
+            // var container = $('container');
+            aiWrapper.after(`
                 <div class="analyzerResults text-center">
                 <h2>Analysis Results</h2>
                     <div class="analyzer-img-container">
@@ -273,13 +320,13 @@ var prodRecommender = (function () {
                         <p>${person.hairLength} hair length</p>
                         <p>${person.hairType} hair type</p>
                         <p> ${person.emotion} emotion</p>
-                        <p>${ageRange} years</p>
+                        <p>${person.skinType} skin type</p>
                         <button class="o-btn o-btn--ternary upload-again">Upload again</button>
                     </div>
                 </div>
             `);
 
-            $('.product-recommend').fadeOut();
+            aiWrapper.fadeOut();
             $('.analyzerResults').fadeIn();
 
             var image = new Image();
@@ -287,9 +334,9 @@ var prodRecommender = (function () {
             document.getElementsByClassName('analyzer-img-container')[0].appendChild(image);
             self.uploadAgain();
         },
-        uploadAgain: function(){
-            $('.upload-again').on('click', function(){
-                $('.product-recommend').fadeIn();
+        uploadAgain: function () {
+            $('.upload-again').on('click', function () {
+                aiWrapper.fadeIn();
                 $('.analyzerResults').fadeOut().remove();
                 $('.productListing').remove();
             });
@@ -308,7 +355,7 @@ var prodRecommender = (function () {
                 data: JSON.stringify(person)
             });
         },
-        productListing: function(products_hair, products_skin, articles){
+        productListing: function (products_hair, products_skin, articles) {
             //append products here
             $('.analyzerResults').after(`
                 <div class="productListing text-center">
@@ -325,7 +372,7 @@ var prodRecommender = (function () {
                 </div>
             `);
             // var myHair = product['hair'];
-            products_hair.forEach(function(product, index){
+            products_hair.forEach(function (product, index) {
                 // console.log(product);
                 $('.productContainer').append(
                     `
@@ -340,7 +387,7 @@ var prodRecommender = (function () {
             });
 
             //var mySkin = product['hair'];
-            products_skin.forEach(function(product, index){
+            products_skin.forEach(function (product, index) {
                 // console.log(product);
                 $('.productContainer').append(
                     `
@@ -354,22 +401,21 @@ var prodRecommender = (function () {
                 )
             });
 
-            articles.forEach(function(article, index){
+            articles.forEach(function (article, index) {
                 //console.log(article);
                 $('.articleContainer').append(`
-                <div class="article-item">                      
-                    <a href="${article.article.url}">
-                        <img src="${article.article.image}"></img>
-                        <div class="article-text-container">
-                            <h4>${article.article.title}</h3>
-                            <p>${article.article.text}</p>
-                        </div>
-                    </a>
-                </div>
+                    <div class="article-item">                      
+                        <a href="${article.article.url}">
+                            <img src="${article.article.image}"></img>
+                            <div class="article-text-container">
+                                <h4>${article.article.title}</h3>
+                                <p>${article.article.text}</p>
+                            </div>
+                        </a>
+                    </div>
             `)
             });
 
         }
     }
 }());
-
