@@ -407,7 +407,7 @@ var prodRecommender = (function () {
                     $('.productContainer').append(
                         `
                         <div class="prod-item">
-                            <a href="${product.productUrl}">
+                            <a href="${product.productUrl}" target="_blank">
                                 <img src="${product.imgurl}" alt="${product.productUrl}" class="prod-image"></img>
                                 <p>${product.productName}</p>
                                 <div class="info-product">
@@ -415,7 +415,7 @@ var prodRecommender = (function () {
                                 <p class="recommended">Recommended by ${product.recommended} people</p>
                                 <div><span class="stars-container ${rating}">★★★★★</span></div>
                                 </div>
-                                <button class="o-btn o-btn--primary buyBtn">Buy</button>
+                                <a class="o-btn o-btn--primary buyBtn" href="${product.binurl}">Buy</a>
                             </a>
                         </div>
                         `
@@ -442,7 +442,7 @@ var prodRecommender = (function () {
                     $('.productContainer').append(
                         `
                         <div class="prod-item">
-                            <a href="${product.productUrl}">
+                            <a href="${product.productUrl}" target="_blank">
                                 <img src="${product.imgurl}" alt="${product.productUrl}" class="prod-image"></img>
                                 <p>${product.productName}</p>
                                 <div class="prod-info">
@@ -450,7 +450,7 @@ var prodRecommender = (function () {
                                 <p class="recommended">Recommended by ${product.recommended} users</p>
                                 <div><span class="stars-container ${rating}">★★★★★</span></div>
                                 </div>
-                                <button class="o-btn o-btn--primary buyBtn">Buy</button>
+                                <a class="o-btn o-btn--primary buyBtn" href="${product.binurl}">Buy</a>
                             </a>
                         </div>
                         `
@@ -462,7 +462,7 @@ var prodRecommender = (function () {
                 //console.log(article);
                 $('.articleContainer').append(`
                     <div class="article-item">                      
-                        <a href="${article.article.url}">
+                        <a href="${article.article.url}" target="_blank">
                             <img src="${article.article.image}"></img>
                             <div class="article-text-container">
                                 <h4>${article.article.title}</h3>
