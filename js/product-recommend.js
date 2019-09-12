@@ -107,7 +107,6 @@ var prodRecommender = (function () {
             window.onclick = function (event) {
                 if (event.target == modal) {
                     modal.style.display = "none";
-
                 }
             }
         },
@@ -125,7 +124,7 @@ var prodRecommender = (function () {
             </div>
 
             <div class="click-img-container hide">
-                <canvas id="photocanvas" width="320" height="240"></canvas>
+            <canvas id="photocanvas" width="320" height="240"></canvas>
             </div>
 
             <div class="product-form-control" style="margin-bottom: 100px; margin-top: 30px">
@@ -287,10 +286,8 @@ var prodRecommender = (function () {
                     result = xmlhttp.responseText;
                     var parsedResult = JSON.parse(result)['media']['faces'][0]['tags'];
                     var skinType = parsedResult[28].value == 'yes'  ? 'pale' : 'fresh' ;
-
-                    //Need to be removed.
-                    if(typeOf(skinType) === undefined){		
-                        skinType = 'fresh';		
+                    if(typeOf(skinType) === undefined){
+                        skinType = 'fresh';
                     }
                     person.skinType = skinType;
                     var hairType = parsedResult[35].value == 'yes' ? 'straight' : parsedResult[36].value == 'yes' ? 'curly' : 'normal';
@@ -325,11 +322,10 @@ var prodRecommender = (function () {
                         
                     </div>
                     <div class="image-description">
-                        <p>${person.hairColor} color hair</p>
-                        <p>${person.hairLength} hair length</p>
-                        <p>${person.hairType} hair type</p>
-                        <p> ${person.emotion} emotion</p>
-                        <p>${person.skinType} skin type</p>
+                        <p>Hair color - ${person.hairColor}</p>
+                        <p>Hair Length - ${person.hairLength}</p>
+                        <p>Hair Type - ${person.hairType}</p>
+                        <p>Skin Type - ${person.skinType}</p>
                         <button class="o-btn o-btn--ternary upload-again">Upload again</button>
                     </div>
                 </div>
@@ -358,7 +354,7 @@ var prodRecommender = (function () {
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function (result) {
-                    //console.log(result);
+                    console.log(result);
                     self.productListing(result['products_hair'], result['products_skin'], result['articles']);
                 },
                 data: JSON.stringify(person)
@@ -368,16 +364,27 @@ var prodRecommender = (function () {
             //append products here
             $('.analyzerResults').after(`
                 <div class="productListing text-center">
-                    <h2>Explore Our Products</h2>
+                    <h2>Products Suitable for you</h2>
                     <div class="productContainer">
 
                     </div>
-
-                    <h2>Learn more about our expert partners</h2>
+                    <h2>Articles for you</h2>
                     <div class="articleContainer">
 
                     </div>
-
+                    <div class="checkbox-wrapper text-left">
+                    <input type="email" class="email" placeholder="Your email">
+                    <label class="c-control-label" for="optin-corporate">
+                    <input id="optin-corporate" type="checkbox" name="optin-corporate" class="c-form-checkbox">
+                    <span class="c-form-checkbox__label-copy" style="
+                        display: inline-flex;
+                    ">
+                    <p>By opt-ing into to our newsletters you automatically receive exciting news, offers and competitions online from Dove.</p>
+                    </span>
+                    </label>
+                    
+                    <button class="o-btn o-btn--ternary subscribe" style="display: block; margin: auto; margin-bottom: 50px;">Subscribe</button>
+                    </div>
                 </div>
             `);
             // var myHair = product['hair'];
@@ -389,6 +396,7 @@ var prodRecommender = (function () {
                         <a href="${product.productUrl}">
                             <img src="${product.imgurl}" alt="${product.productUrl}"></img>
                             <p>${product.productName}</p>
+                            <button class="o-btn o-btn--primary buyBtn">Buy</button>
                         </a>
                     </div>
                     `
@@ -404,7 +412,7 @@ var prodRecommender = (function () {
                         <a href="${product.productUrl}">
                             <img src="${product.imgurl}" alt="${product.productUrl}"></img>
                             <p>${product.productName}</p>
-                            <button class="o-btn o-btn--primary buyBtn">Buy</button>	
+                            <button class="o-btn o-btn--primary buyBtn">Buy</button>
                         </a>
                     </div>
                     `
