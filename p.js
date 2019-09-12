@@ -68,6 +68,7 @@
 
 }());
 
+
 var prodRecommender = (function () {
     "use strict";
     var person = {};
@@ -75,10 +76,11 @@ var prodRecommender = (function () {
     return {
         productRecommenderInit: function () {
             var self = this;
-            $('body').append('<div class="o-btn o-btn--secondary ai-cta">Image analyzer</div>');
+            $('body').append('<div class="ai-cta">Your Personal Gromming Expert</div>');
             self.modalFunction();
 
             $('.ai-cta').on('click', function () {
+                $('.ai-wrapper').remove(); 
                 self.createDOM('modal-content');
             });
         },
@@ -115,15 +117,15 @@ var prodRecommender = (function () {
             aiContainer.append(`
             <div class="ai-wrapper">
             <div class="img-container text-center">
-            <h2 class="u-mb-small">Please upload your picture</h2>
-            <p>we will recommend products as per your needs</p>
+            <h2 class="u-mb-small">Your Personal Gromming Expert</h2>
+            <p>Please upload your image</p>
 
             <div class="img-user">
                 <img src="https://dove-en-uk-stage.unileversolutions.com/etc/ui/dove/clientlibs/core/core/images/image_preview.png" alt="image thumbnail" id="theimage">
             </div>
 
             <div class="click-img-container hide">
-                <canvas id="photocanvas" width="216" height="162"></canvas>
+            <canvas id="photocanvas" width="320" height="240"></canvas>
             </div>
 
             <div class="product-form-control" style="margin-bottom: 100px; margin-top: 30px">
@@ -193,8 +195,8 @@ var prodRecommender = (function () {
             // user wants to take photo, not upload
 
             video2image($("#photocanvas"), {
-                width: 216,
-                height: 162,
+                width: 320,
+                height: 240,
                 autoplay: true,
                 onsuccess: function () {},
                 onerror: function () {}
@@ -285,6 +287,9 @@ var prodRecommender = (function () {
                     result = xmlhttp.responseText;
                     var parsedResult = JSON.parse(result)['media']['faces'][0]['tags'];
                     var skinType = parsedResult[28].value == 'yes'  ? 'pale' : 'fresh' ;
+                    if(typeOf(skinType) === undefined){
+                        skinType = 'fresh';
+                    }
                     person.skinType = skinType;
                     var hairType = parsedResult[35].value == 'yes' ? 'straight' : parsedResult[36].value == 'yes' ? 'curly' : 'normal';
                     //$('.img-user').removeClass('scanning');
@@ -303,7 +308,9 @@ var prodRecommender = (function () {
             xmlhttp.open("POST", "https://www.betafaceapi.com/api/v2/media");
             xmlhttp.setRequestHeader("Content-type", "application/json");
             //xmlhttp.setRequestHeader("X-Access-Token", "xlFXHAhIh48ETvcrYG6RhnYGAIUFqHP5NyMv");
-            xmlhttp.send(JSON.stringify(betaJSON));
+            //xmlhttp.send(JSON.stringify(betaJSON));
+            person.skinType = 'fresh';
+            person.hairType = 'normal';
         },
         analyzeResults: function (person, img) {
             var self = this;
@@ -316,12 +323,11 @@ var prodRecommender = (function () {
                         
                     </div>
                     <div class="image-description">
-                        <p>${person.hairColor} color hair</p>
-                        <p>${person.hairLength} hair length</p>
-                        <p>${person.hairType} hair type</p>
-                        <p> ${person.emotion} emotion</p>
-                        <p>${person.skinType} skin type</p>
-                        <button class="o-btn o-btn--ternary upload-again">Upload again</button>
+                        <p>Hair color - ${person.hairColor}</p>
+                        <p>Hair Length - ${person.hairLength}</p>
+                        <p>Hair Type - ${person.hairType}</p>
+                        <p>Skin Type - ${person.skinType}</p>
+                        <button class="o-btn o-btn--ternary upload-again">Start again</button>
                     </div>
                 </div>
             `);
@@ -349,7 +355,7 @@ var prodRecommender = (function () {
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function (result) {
-                    //console.log(result);
+                    console.log(result);
                     self.productListing(result['products_hair'], result['products_skin'], result['articles']);
                 },
                 data: JSON.stringify(person)
@@ -359,47 +365,98 @@ var prodRecommender = (function () {
             //append products here
             $('.analyzerResults').after(`
                 <div class="productListing text-center">
-                    <h2>Explore Our Products</h2>
+                    <h2>Products Suitable for you</h2>
                     <div class="productContainer">
 
                     </div>
-
-                    <h2>Learn more about our expert partners</h2>
+                    <h2>Articles for you</h2>
                     <div class="articleContainer">
 
                     </div>
-
+                    <div class="checkbox-wrapper text-left">
+                    <input type="email" class="email" placeholder="Your email">
+                    <label class="c-control-label" for="optin-corporate">
+                    <input id="optin-corporate" type="checkbox" name="optin-corporate" class="c-form-checkbox">
+                    <span class="c-form-checkbox__label-copy" style="
+                        display: inline-flex;
+                    ">
+                    <p>By opt-ing into to our newsletters you automatically receive exciting news, offers and competitions online from Dove.</p>
+                    </span>
+                    </label>
+                    
+                    <button class="o-btn o-btn--ternary subscribe" style="display: block; margin: auto; margin-bottom: 50px;">Subscribe</button>
+                    </div>
                 </div>
             `);
             // var myHair = product['hair'];
-            products_hair.forEach(function (product, index) {
-                // console.log(product);
-                $('.productContainer').append(
-                    `
-                    <div class="prod-item">
-                        <a href="${product.productUrl}">
-                            <img src="${product.imgurl}" alt="${product.productUrl}"></img>
-                            <p>${product.productName}</p>
-                        </a>
-                    </div>
-                    `
-                )
-            });
+            if(products_hair.length > 0){
+                var rating, ratingFromDB;
+                products_hair.forEach(function (product, index) {
+                    ratingFromDB = product.rating.$numberDecimal;
+                    if(ratingFromDB > 4.5){
+                        rating = "stars-5";
+                    } else if(ratingFromDB > 4){
+                        rating = "stars-4p5";
+                    }  else if(ratingFromDB > 3.5){
+                        rating = "stars-4";
+                    }
+                    else if(ratingFromDB > 3){
+                        rating = "stars-3p5";
+                    }
+                    
+                    $('.productContainer').append(
+                        `
+                        <div class="prod-item">
+                            <a href="${product.productUrl}">
+                                <img src="${product.imgurl}" alt="${product.productUrl}" class="prod-image"></img>
+                                <p>${product.productName}</p>
+                                <div class="info-product">
+                                <img class="img-thumb" src="product-recommend/thumb-up.svg"></img>
+                                <p class="recommended">Recommended by ${product.recommended} people</p>
+                                <div><span class="stars-container ${rating}">★★★★★</span></div>
+                                </div>
+                                <button class="o-btn o-btn--primary buyBtn">Buy</button>
+                            </a>
+                        </div>
+                        `
+                    )
+                });
+            }
 
             //var mySkin = product['hair'];
-            products_skin.forEach(function (product, index) {
-                // console.log(product);
-                $('.productContainer').append(
-                    `
-                    <div class="prod-item">
-                        <a href="${product.productUrl}">
-                            <img src="${product.imgurl}" alt="${product.productUrl}"></img>
-                            <p>${product.productName}</p>
-                        </a>
-                    </div>
-                    `
-                )
-            });
+            if(products_skin.length > 0){
+                var rating, ratingFromDB;
+                products_skin.forEach(function (product, index) {
+                    ratingFromDB = product.rating.$numberDecimal;
+                    if(ratingFromDB > 4.5){
+                        rating = "stars-5";
+                    } else if(ratingFromDB > 4){
+                        rating = "stars-4p5";
+                    }  else if(ratingFromDB > 3.5){
+                        rating = "stars-4";
+                    }
+                    else if(ratingFromDB > 3){
+                        rating = "stars-3p5";
+                    }
+                    // console.log(product);
+                    $('.productContainer').append(
+                        `
+                        <div class="prod-item">
+                            <a href="${product.productUrl}">
+                                <img src="${product.imgurl}" alt="${product.productUrl}" class="prod-image"></img>
+                                <p>${product.productName}</p>
+                                <div class="prod-info">
+                                <img class="img-thumb" src="product-recommend/thumb-up.svg"></img>
+                                <p class="recommended">Recommended by ${product.recommended} users</p>
+                                <div><span class="stars-container ${rating}">★★★★★</span></div>
+                                </div>
+                                <button class="o-btn o-btn--primary buyBtn">Buy</button>
+                            </a>
+                        </div>
+                        `
+                    )
+                });
+            }
 
             articles.forEach(function (article, index) {
                 //console.log(article);
