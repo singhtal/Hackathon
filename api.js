@@ -49,8 +49,8 @@ app.get('/', function(req, res) {
 // for hair products
     DoveProducts.find(
       {
-        'suitableFor.minage': { $lt: userage },
-        'suitableFor.maxage': { $gt: userage },
+        'suitableFor.minage': { $lte: userage },
+        'suitableFor.maxage': { $gte: userage },
         'suitableFor.gender': gender.toLowerCase(),
         'suitableFor.hairColor': hairColor.toLowerCase(),
         'suitableFor.hairLength': hairLength.toLowerCase()
@@ -59,14 +59,14 @@ app.get('/', function(req, res) {
       function (err, hairproducts) {
         if (err) return console.error(err);
         finalResults['products_hair'] = hairproducts;
-      }).limit(3);
+      }).limit(2);
 
 
 // for skin DoveProducts
 DoveProducts.find(
   {
-    'suitableFor.minage': { $lt: userage },
-    'suitableFor.maxage': { $gt: userage },
+    'suitableFor.minage': { $lte: userage },
+    'suitableFor.maxage': { $gte: userage },
     'suitableFor.gender': gender.toLowerCase(),
     'suitableFor.skinColor': skinColor.toLowerCase()
   },
@@ -76,14 +76,41 @@ DoveProducts.find(
     finalResults['products_skin'] = skinproducts;
     console.log(skinproducts.length);
     //console.log(skinproducts);
+  }).limit(2);
+
+
+// for baby
+
+if(userage < 5){
+
+if(userage == 0){
+  userage = 1;
+}
+
+console.log('userage '+ userage);
+
+DoveProducts.find(
+  {
+    'suitableFor.minage': { $lte: userage },
+    'suitableFor.maxage': { $gte: userage },
+  },
+
+  function (err, skinproducts) {
+    if (err) return console.error(err);
+    finalResults['products_skin'] = skinproducts;
+    console.log('baby length '+skinproducts.length);
+    //console.log(skinproducts);
   }).limit(3);
 
+}
 
 // for articles
+
+if(userage > 5){
       DoveProducts.find(
         {
-          'suitableFor.minage': { $lt: userage },
-          'suitableFor.maxage': { $gt: userage },
+          'suitableFor.minage': { $lte: userage },
+          'suitableFor.maxage': { $gte: userage },
           'suitableFor.gender': gender.toLowerCase()
         },
 
@@ -95,6 +122,24 @@ DoveProducts.find(
         res.end(JSON.stringify(finalResults));
 
         }).limit(3);
+
+} else {
+  DoveProducts.find(
+    {
+      'suitableFor.minage': { $lte: userage },
+      'suitableFor.maxage': { $gte: userage },
+    },
+
+    function (err, articlesList) {
+      if (err) return console.error(err);
+      finalResults['articles'] = articlesList;
+
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(finalResults));
+
+    }).limit(3);
+}
+
 
 
 });
