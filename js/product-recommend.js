@@ -110,6 +110,7 @@ var prodRecommender = (function () {
                     modal.style.display = "none";
                 }
             }
+
         },
         createDOM: function (elem) {
             aiContainer =  $('.'+elem);
@@ -363,6 +364,8 @@ var prodRecommender = (function () {
         },
         productListing: function (products_hair, products_skin, articles) {
             //append products here
+            console.log(products_hair);
+            console.log(products_skin);
             $('.analyzerResults').after(`
                 <div class="productListing text-center">
                     <h2>Products Suitable for you</h2>
@@ -388,7 +391,14 @@ var prodRecommender = (function () {
                     </div>
                 </div>
             `);
+            
             // var myHair = product['hair'];
+            $('.subscribe').on('click',function(){
+                $('.checkbox-wrapper').empty();
+                $('.checkbox-wrapper').append('<h2>Thank you for Subscribing !</h2>');
+            });
+
+            if(typeof products_hair !== 'undefined'){
             if(products_hair.length > 0){
                 var rating, ratingFromDB;
                 products_hair.forEach(function (product, index) {
@@ -422,8 +432,10 @@ var prodRecommender = (function () {
                     )
                 });
             }
+            }
 
             //var mySkin = product['hair'];
+            if(typeof products_skin !== 'undefined'){
             if(products_skin.length > 0){
                 var rating, ratingFromDB;
                 products_skin.forEach(function (product, index) {
@@ -456,6 +468,7 @@ var prodRecommender = (function () {
                         `
                     )
                 });
+            }
             }
 
             articles.forEach(function (article, index) {
