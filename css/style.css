@@ -54,6 +54,7 @@
     padding-left: 20px;
     position: relative;
     margin-bottom: 5px;
+    font-weight: bold;
 }
 
 .image-description p::before {
@@ -87,10 +88,10 @@
 @media (min-width: 992px) {
 
     .articleContainer {
-        max-width: 768px;
+        max-width: 991px;
     }
     .productContainer {
-        max-width: 1024px;
+        max-width: 1092px;
     }
 }
 
@@ -109,7 +110,9 @@
         margin-bottom: 10px;
     }
     .prod-item {
-        width: 25%;
+        width: 24%;
+        display: inline-block;
+        float: unset;
     }
 }
 
@@ -298,7 +301,7 @@
     background-color: #fefefe;
     margin: 10% auto;
     /* 15% from the top and centered */
-    padding: 40px 20px;
+    padding: 20px;
     border: 1px solid #888;
     width: 80%;
     /* Could be more or less, depending on screen size */
@@ -310,6 +313,7 @@
     float: right;
     font-size: 28px;
     font-weight: bold;
+    margin-top: 20px;
 }
 
 .close:hover,
@@ -390,7 +394,7 @@
     margin-bottom: 50px;
 }
 .recommended{		
-    font-size: 12px !important;		
+    font-size: 13px !important;		
     color: #343f44 !important;		
     line-height: 12px !important;		
     min-height: 12px !important;		
@@ -445,7 +449,7 @@
   .stars-4p5:after { width: 90%; }		
   .stars-5:after { width: 100; }		
 .checkbox-wrapper{		
-    padding-left: 50px;		
+    padding-left: 0px;
 }		
 .checkbox-wrapper label{		
     text-align: left;		
@@ -515,10 +519,9 @@ span.c-form-checkbox__label-copy:after {
     margin: 0 auto;
     margin-top: 20px;
 }
-
-.checkbox-wrapper h2{
-    margin-bottom: 20px;
-}
-.analysisValue{
-    color: #002663;
+.checkbox-wrapper h2{		
+    margin-bottom: 20px;		
+}		
+.analysisValue{		
+    color: #002663;		
 }
