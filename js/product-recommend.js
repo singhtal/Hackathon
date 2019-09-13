@@ -5,7 +5,19 @@
     var video;
 
     video2image = function (elem, options) {
-        canvas = elem[0] // our canvas
+        var modal = document.getElementById("myModal");
+        canvas = elem[0]; // our canvas
+
+        $('.close').on('click', function () {
+            video.srcObject.getTracks().forEach(track => track.stop());
+        });
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+        }
 
         if (options === 'isSupported') {
             return isSupported;
@@ -68,7 +80,6 @@
 
 }());
 
-
 var prodRecommender = (function () {
     "use strict";
     var person = {};
@@ -108,9 +119,9 @@ var prodRecommender = (function () {
             window.onclick = function (event) {
                 if (event.target == modal) {
                     modal.style.display = "none";
+
                 }
             }
-
         },
         createDOM: function (elem) {
             aiContainer =  $('.'+elem);
@@ -126,7 +137,7 @@ var prodRecommender = (function () {
             </div>
 
             <div class="click-img-container hide">
-            <canvas id="photocanvas" width="320" height="240"></canvas>
+                <canvas id="photocanvas" width="320" height="240"></canvas>
             </div>
 
             <div class="product-form-control" style="margin-bottom: 100px; margin-top: 30px">
@@ -142,6 +153,7 @@ var prodRecommender = (function () {
             </div>
         </div>
         </div>
+        <div class="o-preloader c-content-loader hide">Preloader</div>
             `);
 
           aiWrapper = aiContainer.find('.ai-wrapper');  
@@ -155,6 +167,7 @@ var prodRecommender = (function () {
                 // var file = eve.srcElement.files[0];
                 $('.img-user').removeClass('hide');
                 $('.click-img-container').addClass('hide');
+                $('.c-content-loader').removeClass('hide');
                 //$(this).parent().find('.span').toggleClass('hide');
 
                 if (eve.target.files && eve.target.files[0]) {
@@ -179,14 +192,15 @@ var prodRecommender = (function () {
                 self.getDetails();
                 //$('.click-img-container').removeClass('hide');
                 $('.takephoto').find('span').toggleClass('hide');
-                $('.click-img-container').removeClass('scanning');
+                $('.c-content-loader').removeClass('hide');
+                $('.click-img-container').addClass('scanning');
             });
 
             $('.takepicbtn').on('click', function (e) {
                 $('.img-user').addClass('hide');
                 $('.click-img-container').removeClass('hide');
                 $(this).parent().find('span').toggleClass('hide');
-                $('.click-img-container').addClass('scanning');
+                //$('.click-img-container').addClass('scanning');
                 self.takephoto();
             });
 
@@ -232,7 +246,6 @@ var prodRecommender = (function () {
                         window.location.reload();
                     }
                     parsedResult = JSON.parse(result)["objects"][1]["attributes"];
-                    $('.img-user').removeClass('scanning');
 
                     var age, gender, emotion, hairColor, hairLength, race;
 
@@ -265,7 +278,7 @@ var prodRecommender = (function () {
 
                     // get data
                     //console.log(person);
-                    setTimeout(function(){ 
+                    setTimeout(function(){
                         self.analyzeResults(person, $('#b64').text());
                         self.getProductData(person);
                     }, 2000);
@@ -288,13 +301,18 @@ var prodRecommender = (function () {
                     result = xmlhttp.responseText;
                     var parsedResult = JSON.parse(result)['media']['faces'][0]['tags'];
                     var skinType = parsedResult[28].value == 'yes'  ? 'pale' : 'fresh' ;
-                    if(typeOf(skinType) === undefined){
+                    if(typeof skinType == 'undefined'){
                         skinType = 'fresh';
                     }
                     person.skinType = skinType;
+                    console.log(parsedResult[35].value);
                     var hairType = parsedResult[35].value == 'yes' ? 'straight' : parsedResult[36].value == 'yes' ? 'curly' : 'normal';
                     //$('.img-user').removeClass('scanning');
+                    if(typeof hairType == 'undefined'){
+                        hairType = 'normal';
+                    }
                     person.hairType = hairType;
+                    person.skinType = skinType;
 
                 }
             }
@@ -309,9 +327,9 @@ var prodRecommender = (function () {
             xmlhttp.open("POST", "https://www.betafaceapi.com/api/v2/media");
             xmlhttp.setRequestHeader("Content-type", "application/json");
             //xmlhttp.setRequestHeader("X-Access-Token", "xlFXHAhIh48ETvcrYG6RhnYGAIUFqHP5NyMv");
-            //xmlhttp.send(JSON.stringify(betaJSON));
-            person.skinType = 'fresh';
-            person.hairType = 'normal';
+            xmlhttp.send(JSON.stringify(betaJSON));
+            // person.skinType = 'fresh';
+            // person.hairType = 'normal';
         },
         analyzeResults: function (person, img) {
             var self = this;
@@ -332,7 +350,7 @@ var prodRecommender = (function () {
                     </div>
                 </div>
             `);
-
+            $('.img-user').removeClass('scanning');
             aiWrapper.fadeOut();
             $('.analyzerResults').fadeIn();
 
@@ -346,6 +364,9 @@ var prodRecommender = (function () {
                 aiWrapper.fadeIn();
                 $('.analyzerResults').fadeOut().remove();
                 $('.productListing').remove();
+                $('.click-img-container').removeClass('scanning');
+                $('.click-img-container').addClass('hide');
+                $('.img-user').removeClass('hide');
             });
         },
         getProductData: function (person) {
@@ -356,7 +377,8 @@ var prodRecommender = (function () {
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function (result) {
-                    console.log(result);
+                    //console.log(result);
+                    $('.c-content-loader').addClass('hide');
                     self.productListing(result['products_hair'], result['products_skin'], result['articles']);
                 },
                 data: JSON.stringify(person)
@@ -372,11 +394,14 @@ var prodRecommender = (function () {
                     <div class="productContainer">
 
                     </div>
+
                     <h2>Articles for you</h2>
+
                     <div class="articleContainer">
 
                     </div>
-                    <div class="checkbox-wrapper text-left">
+                    <h2>Need Product Updates?</h2>
+                    <div class="checkbox-wrapper text-center">
                     <input type="email" class="email" placeholder="Your email">
                     <label class="c-control-label" for="optin-corporate">
                     <input id="optin-corporate" type="checkbox" name="optin-corporate" class="c-form-checkbox">
@@ -389,13 +414,21 @@ var prodRecommender = (function () {
                     
                     <button class="o-btn o-btn--ternary subscribe" style="display: block; margin: auto; margin-bottom: 50px;">Subscribe</button>
                     </div>
+
                 </div>
             `);
-            
+
             // var myHair = product['hair'];
             $('.subscribe').on('click',function(){
-                $('.checkbox-wrapper').empty();
-                $('.checkbox-wrapper').append('<h2>Thank you for Subscribing !</h2>');
+                if($('.email').val() == ""){
+                    $('.email').css("border-color", "red");
+                } else if($('.c-form-checkbox').prop("checked") ==  false){
+                    $('.c-control-label').css('border', '1px solid red');
+                } else {
+                    $('.checkbox-wrapper').empty();
+                    $('.checkbox-wrapper').append('<h2>Thank you for Subscribing !</h2>');
+                    $('.c-form-checkbox__label-copy');
+                }
             });
 
             if(typeof products_hair !== 'undefined'){
@@ -425,7 +458,7 @@ var prodRecommender = (function () {
                                 <p class="recommended">Recommended by ${product.recommended} people</p>
                                 <div><span class="stars-container ${rating}">★★★★★</span></div>
                                 </div>
-                                <a class="o-btn o-btn--primary buyBtn" href="${product.binurl}">Buy</a>
+                                <a class="o-btn o-btn--primary buyBtn" href="${product.binurl}" target="_blank">Buy</a>
                             </a>
                         </div>
                         `
@@ -462,7 +495,7 @@ var prodRecommender = (function () {
                                 <p class="recommended">Recommended by ${product.recommended} users</p>
                                 <div><span class="stars-container ${rating}">★★★★★</span></div>
                                 </div>
-                                <a class="o-btn o-btn--primary buyBtn" href="${product.binurl}">Buy</a>
+                                <a class="o-btn o-btn--primary buyBtn" href="${product.binurl}" target="_blank">Buy</a>
                             </a>
                         </div>
                         `
@@ -475,7 +508,7 @@ var prodRecommender = (function () {
                 //console.log(article);
                 $('.articleContainer').append(`
                     <div class="article-item">                      
-                        <a href="${article.article.url}" target="_blank">
+                        <a href="${article.article.url}">
                             <img src="${article.article.image}"></img>
                             <div class="article-text-container">
                                 <h4>${article.article.title}</h3>
