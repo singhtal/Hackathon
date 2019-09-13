@@ -43,6 +43,7 @@ app.get('/', function(req, res) {
     var hairLength= (userObj.hairLength).toLowerCase();
     var gender = (userObj.gender).toLowerCase();
     var skinColor = (userObj.skinType).toLowerCase();
+    var hairType = (userObj.hairType).toLowerCase();
     var userage = parseInt(userObj.age);
     var finalResults = {};
 
@@ -53,7 +54,8 @@ app.get('/', function(req, res) {
         'suitableFor.maxage': { $gte: userage },
         'suitableFor.gender': gender.toLowerCase(),
         'suitableFor.hairColor': hairColor.toLowerCase(),
-        'suitableFor.hairLength': hairLength.toLowerCase()
+        'suitableFor.hairLength': hairLength.toLowerCase(),
+        'suitableFor.hairType':  { $in: [ hairType.toLowerCase(), "all" ] }
       },
 
       function (err, hairproducts) {
