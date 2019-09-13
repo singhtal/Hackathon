@@ -341,10 +341,10 @@ var prodRecommender = (function () {
                         
                     </div>
                     <div class="image-description">
-                        <p>Hair color - ${person.hairColor}</p>
-                        <p>Hair Length - ${person.hairLength}</p>
-                        <p>Hair Type - ${person.hairType}</p>
-                        <p>Skin Type - ${person.skinType}</p>
+                        <p>Hair color - <span class="analysisValue"> ${person.hairColor} </span> </p>
+                        <p>Hair Length -  <span class="analysisValue"> ${person.hairLength} </span></p>
+                        <p>Hair Type -  <span class="analysisValue"> ${person.hairType} </span></p>
+                        <p>Skin Type -  <span class="analysisValue">  ${person.skinType} </span> </p>
                         <button class="o-btn o-btn--ternary upload-again">Start again</button>
                     </div>
                 </div>
@@ -399,8 +399,9 @@ var prodRecommender = (function () {
                     <div class="articleContainer">
 
                     </div>
-                    <h2>Need Product Updates?</h2>
+                    
                     <div class="checkbox-wrapper text-center">
+                    <h2>Need Product Updates?</h2>
                     <input type="email" class="email" placeholder="Your email">
                     <label class="c-control-label" for="optin-corporate">
                     <input id="optin-corporate" type="checkbox" name="optin-corporate" class="c-form-checkbox">
