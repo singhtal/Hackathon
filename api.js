@@ -144,6 +144,18 @@ if(userage > 5){
           if (err) return console.error(err);
           finalResults['articles'] = articlesList;
 
+          // fallback for articlesList
+          DoveProducts.find(
+            {
+              'suitableFor.gender': gender.toLowerCase()
+            },
+
+            function (err, articlesList) {
+              if (err) return console.error(err);
+              finalResults['articles'] = articlesList;
+            }).limit(3);
+          // fallback for articles ends
+
         res.setHeader('Content-Type', 'application/json');
         setTimeout(function() { res.end(JSON.stringify(finalResults)) }, 1000);
         }).limit(3);
