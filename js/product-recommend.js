@@ -301,14 +301,13 @@ var prodRecommender = (function () {
                     result = xmlhttp.responseText;
                     var parsedResult = JSON.parse(result)['media']['faces'][0]['tags'];
                     var skinType = parsedResult[28].value == 'yes'  ? 'pale' : 'fresh' ;
-                    if(typeof skinType == 'undefined'){
+                    if(!(typeof skinType == 'undefined')){
                         skinType = 'fresh';
                     }
                     person.skinType = skinType;
-                    console.log(parsedResult[35].value);
                     var hairType = parsedResult[35].value == 'yes' ? 'straight' : parsedResult[36].value == 'yes' ? 'curly' : 'normal';
                     //$('.img-user').removeClass('scanning');
-                    if(typeof hairType == 'undefined'){
+                    if(!(typeof hairType !== 'undefined')){
                         hairType = 'normal';
                     }
                     person.hairType = hairType;
